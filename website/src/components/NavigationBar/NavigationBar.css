@@ -39,7 +39,7 @@
     display: flex;
     align-items: center;
     margin-right: -24px;
-    justify-content: end;
+    justify-content: flex-end;
 }
 
 .nav-container {
