@@ -14,6 +14,7 @@ const NavigationBar = () => {
           <Navbar.Collapse id="responsive-navbar-nav" className="navmenu">
             <Nav>
                 <Link className="link" to="/">Home</Link>
+                <Link className='link' to="/processingtest">Processing Test</Link>
                 <Link className="link" to="/whatsappanalyzer">WhatsApp Analyzer</Link>
             </Nav>
           </Navbar.Collapse>

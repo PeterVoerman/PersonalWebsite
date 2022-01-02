@@ -33,6 +33,10 @@
     color: gray;
 }
 
+.navlink {
+    color: white;
+}
+
 .navmenu {
     align-items: center;
     justify-content: flex-end;

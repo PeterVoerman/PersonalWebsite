@@ -6,7 +6,8 @@ import { BrowserRouter as Router, Route, Routes } from "react-router-dom";
 import {
   NavigationBar,
   Home,
-  WhatsAppAnalyzer
+  WhatsAppAnalyzer,
+  ProcessingTest
 } from './components'
 
 ReactDOM.render(
@@ -14,6 +15,7 @@ ReactDOM.render(
     <NavigationBar/>
     <Routes>
       <Route path="/" element={<Home/>}/>
+      <Route path='/processingtest' element={<ProcessingTest/>}/>
       <Route path="/whatsappanalyzer" element={<WhatsAppAnalyzer/>}/>
     </Routes>
   </Router>,
