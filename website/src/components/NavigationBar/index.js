@@ -1,17 +1,17 @@
 import React from "react";
-import { Container, Navbar, Nav } from 'react-bootstrap'
+import { Container, Navbar, Nav, Offcanvas, NavDropdown, Button } from 'react-bootstrap'
 import { NavLink as Link } from "react-router-dom";
 import './NavigationBar.css'
 
 
 const NavigationBar = () => {
   return (
-    <div>
-      <Navbar className="navbar">
+    <>
+      <Navbar collapseOnSelect expand='sm' variant='dark' className="navbar">
         <Container className="nav-container">
           <Link className='logo' to='/'>Peter Voerman</Link>
-          <Navbar.Toggle aria-controls="basic-navbar-nav" />
-          <Navbar.Collapse id="basic-navbar-nav" className="navmenu">
+          <Navbar.Toggle aria-controls="responsive-navbar-nav" className="toggle"/>
+          <Navbar.Collapse id="responsive-navbar-nav" className="navmenu">
             <Nav>
                 <Link className="link" to="/">Home</Link>
                 <Link className="link" to="/whatsappanalyzer">WhatsApp Analyzer</Link>
@@ -19,7 +19,7 @@ const NavigationBar = () => {
           </Navbar.Collapse>
         </Container>
       </Navbar> 
-    </div>
+    </>
   );
 };
 export default NavigationBar;

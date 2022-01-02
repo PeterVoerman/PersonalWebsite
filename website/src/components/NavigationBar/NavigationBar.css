@@ -1,6 +1,5 @@
 .navbar {
     background: black;
-    height: 85px;
     display: flex;
     justify-content: space-between;
     align-items: center;
@@ -45,4 +44,8 @@
 
 .nav-container {
     max-width: 90%;
+}
+
+.toggle {
+    color: white;
 }

@@ -11,10 +11,10 @@ import {
 
 ReactDOM.render(
   <Router>
-    <NavigationBar />
+    <NavigationBar/>
     <Routes>
-      <Route path="/" element={<Home />} />
-      <Route path="/whatsappanalyzer" element={<WhatsAppAnalyzer />} />
+      <Route path="/" element={<Home/>}/>
+      <Route path="/whatsappanalyzer" element={<WhatsAppAnalyzer/>}/>
     </Routes>
   </Router>,
 
