@@ -1,0 +1,73 @@
+.analyzer {
+  text-align: center;
+  padding-top: 10pt;
+  color:#00bfa5;
+}
+
+html, body {
+  margin: 0;
+  height: 100%; 
+  overflow: hidden;
+  background-color: #131c21;
+}
+
+.header {
+  cursor: pointer;
+}
+
+.input {
+  opacity:0;
+  height:25vh;
+}
+
+.inputlabel {
+    padding: 0.5rem;
+    font-family: sans-serif;
+    border-radius: 0.3rem;
+    cursor: pointer;
+    margin-top: 1rem;
+    border-style: dashed;
+    border-color: #00af9c;
+    text-align: left;
+}
+
+.upload {
+  background-color: #262d31;
+  border-radius: 8px;
+  padding-top: 15px;
+  padding-bottom: 15px;
+}
+
+.explanation {
+  text-align: left;
+  background-color: #262d31;
+  border-radius: 8px;
+  padding-top: 15px;
+}
+
+.emojitable {
+  font-size: x-large; 
+  margin: 0 auto;
+}
+
+.namebutton {
+  outline: 1px solid #00af9c;
+  word-break: break-all;
+}
+
+.namebutton:hover {
+  background-color: #00af9c;
+  color: white;
+  cursor: pointer;
+}
+
+.namelist {
+  padding-top: 30px;
+  overflow-y: auto;
+  height: 45vh;
+  padding-bottom: 1px;
+}
+
+.wordcloud {
+  max-width: 33vw;
+}
