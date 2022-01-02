@@ -1,0 +1,48 @@
+.navbar {
+    background: black;
+    height: 85px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    z-index: 12;
+}
+
+.logo {
+    cursor: pointer;
+    color: white;
+    font-size: 2rem;
+}
+
+.logo:hover {
+    color: white;
+    text-decoration: none;
+}
+
+.link {
+    color: white;
+    display: flex;
+    align-items: center;
+    text-decoration: none;
+    padding: 0 1rem;
+    height: 100%;
+    cursor: pointer;
+}
+
+.link.active {
+    color:gray;
+}
+
+.link:hover {
+    color: gray;
+}
+
+.navmenu {
+    display: flex;
+    align-items: center;
+    margin-right: -24px;
+    justify-content: end;
+}
+
+.nav-container {
+    max-width: 90%;
+}

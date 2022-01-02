@@ -4,14 +4,14 @@ import './index.css';
 import reportWebVitals from './reportWebVitals';
 import { BrowserRouter as Router, Route, Routes } from "react-router-dom";
 import {
-  NavBar,
+  NavigationBar,
   Home,
   WhatsAppAnalyzer
 } from './components'
 
 ReactDOM.render(
   <Router>
-    <NavBar />
+    <NavigationBar />
     <Routes>
       <Route path="/" element={<Home />} />
       <Route path="/whatsappanalyzer" element={<WhatsAppAnalyzer />} />
