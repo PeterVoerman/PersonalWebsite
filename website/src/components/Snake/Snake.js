@@ -1,16 +1,38 @@
-import React, { useEffect, useRef } from 'react'
+import React, { useEffect, useState } from 'react'
 import Sketch from 'react-p5'
+
+function getWindowDimensions() {
+  const { innerWidth: width, innerHeight: height } = window;
+  return {
+    width,
+    height
+  };
+}
+
+function useWindowDimensions() {
+  const [windowDimensions, setWindowDimensions] = useState(
+    getWindowDimensions()
+  );
+
+  useEffect(() => {
+    function handleResize() {
+      setWindowDimensions(getWindowDimensions());
+    }
+
+    window.addEventListener("resize", handleResize);
+    return () => window.removeEventListener("resize", handleResize);
+  }, []);
+
+  return windowDimensions;
+}
+
 
 function Snake() {
 
-  // // const ref = useRef(null);
-  // // useEffect(() => {
-  // //   console.log('width', ref.current ? ref.current.offsetWidth : 0);
-  // //   console.log('height', ref.current ? ref.current.offsetHeight : 0)
-  // }, [ref.current]);
+  const { width, height } = useWindowDimensions()
 
   const setup = (p5, canvasParentRef) => {
-    const cnv = p5.createCanvas(1000, 700).parent(canvasParentRef)
+    const cnv = p5.createCanvas(width, height - 100).parent(canvasParentRef)
     cnv.keyReleased = (event) => {
       console.log(event);
     };

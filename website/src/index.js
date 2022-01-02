@@ -7,7 +7,6 @@ import {
   NavigationBar,
   Home,
   WhatsAppAnalyzer,
-  ProcessingTest,
   Snake,
   FractalTree
 } from './components'
@@ -17,9 +16,8 @@ ReactDOM.render(
     <NavigationBar/>
     <Routes>
       <Route path="/" element={<Home/>}/>
-      <Route path='/processingtest' element={<ProcessingTest/>}/>
-      <Route path='/processingtest/snake' element={<Snake/>}/>
-      <Route path='/processingtest/fractaltree' element={<FractalTree/>}/>
+      <Route path='/snake' element={<Snake/>}/>
+      <Route path='/fractaltree' element={<FractalTree/>}/>
       <Route path="/whatsappanalyzer" element={<WhatsAppAnalyzer/>}/>
     </Routes>
   </Router>,

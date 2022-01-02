@@ -1,14 +1,43 @@
-import React from 'react'
+import React, { useEffect, useState } from 'react'
 import Sketch from 'react-p5'
 
 let Rainbow = require('rainbowvis.js')
 let gradient = new Rainbow()
 
+function getWindowDimensions() {
+  const { innerWidth: width, innerHeight: height } = window;
+  return {
+    width,
+    height
+  };
+}
+
+function useWindowDimensions() {
+  const [windowDimensions, setWindowDimensions] = useState(
+    getWindowDimensions()
+  );
+
+  useEffect(() => {
+    function handleResize() {
+      setWindowDimensions(getWindowDimensions());
+    }
+
+    window.addEventListener("resize", handleResize);
+    return () => window.removeEventListener("resize", handleResize);
+  }, []);
+
+  return windowDimensions;
+}
+
+
 function FractalTree() {
+
+  const { height, width } = useWindowDimensions();
 
   let treeCoords = []
   let colors = []
-  let treeHeight = 17
+  let treeHeight = 20
+  let lengthIncrement = height / 250
 
   gradient.setNumberRange(1, treeHeight)
   gradient.setSpectrum("blue", "lightblue")
@@ -18,7 +47,7 @@ function FractalTree() {
   }
 
   const setup = (p5, canvasParentRef) => {
-    p5.createCanvas(2560, 1200).parent(canvasParentRef)
+    p5.createCanvas(width, height - 100).parent(canvasParentRef)
     p5.noLoop()
     
   }
@@ -30,7 +59,7 @@ function FractalTree() {
     drawLine(p5, p5.width/2, p5.height, p5.width/2, p5.height-50, 0, treeHeight+1)
 
     if (treeCoords.length === 0) {
-      fractalTree(p5, p5.width/2, p5.height-50, 3*p5.HALF_PI, (treeHeight+1)*5, 0, treeHeight)
+      fractalTree(p5, p5.width/2, p5.height-50, 3*p5.HALF_PI, (treeHeight+1)*lengthIncrement, 0, treeHeight)
     }
 
     
@@ -56,10 +85,10 @@ function FractalTree() {
   }
 
   function fractalTree(p5, x, y, angle, length, counter, treeHeight) {
-    let angle1 = angle + p5.random(0, 0.15) * p5.PI
-    let angle2 = angle - p5.random(0, 0.15) * p5.PI
+    let angle1 = angle + p5.random(0, 0.1 + counter / 80) * p5.PI
+    let angle2 = angle - p5.random(0, 0.1 + counter / 80) * p5.PI
 
-    let newLength = length - 5
+    let newLength = length - lengthIncrement
 
     let coords1 = newCoords(p5, x, y, angle1, newLength)
     let coords2 = newCoords(p5, x, y, angle2, newLength)
@@ -77,12 +106,13 @@ function FractalTree() {
   
   
 
-
-  return (
-    <div  className='snake'>
-      <Sketch setup={setup} draw={draw}/>
-    </div>
-  )
+  if (width) {
+    return (
+      <div  className='snake'>
+        <Sketch setup={setup} draw={draw}/>
+      </div>
+    )
+  }
 }
 
 
