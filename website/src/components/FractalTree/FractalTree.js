@@ -1,5 +1,8 @@
 import React, { useEffect, useState } from 'react'
 import Sketch from 'react-p5'
+import Helmet from 'react-helmet'
+
+import './fractaltree.css'
 
 let Rainbow = require('rainbowvis.js')
 let gradient = new Rainbow()
@@ -36,8 +39,8 @@ function FractalTree() {
 
   let treeCoords = []
   let colors = []
-  let treeHeight = 20
-  let lengthIncrement = height / 250
+  let treeHeight = 15
+  let lengthIncrement = height / 130
 
   gradient.setNumberRange(1, treeHeight)
   gradient.setSpectrum("blue", "lightblue")
@@ -47,7 +50,7 @@ function FractalTree() {
   }
 
   const setup = (p5, canvasParentRef) => {
-    p5.createCanvas(width, height - 100).parent(canvasParentRef)
+    p5.createCanvas(width-2, height-2).parent(canvasParentRef)
     p5.noLoop()
     
   }
@@ -108,7 +111,10 @@ function FractalTree() {
 
   if (width) {
     return (
-      <div  className='snake'>
+      <div  className='fractaltree'>
+        <Helmet>
+                <style>{'body { overflow: hidden; }'}</style>
+          </Helmet>
         <Sketch setup={setup} draw={draw}/>
       </div>
     )

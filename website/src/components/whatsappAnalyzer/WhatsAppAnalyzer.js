@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { Helmet } from 'react-helmet'
 import './WhatsAppAnalyzer.css';
 
 import AnalysisScreen from './Components/analysisScreen'
@@ -13,7 +14,10 @@ function WhatsAppAnalyzer() {
   if (logs === '') {
     return (
       <div className='uploadscreen'>
-      <UploadScreen setLogs={setLogs}/>
+        <Helmet>
+          <style>{'body { background-color: #131c21; }'}</style>
+        </Helmet>
+        <UploadScreen setLogs={setLogs}/>
       </div>
     )
   }
@@ -22,11 +26,13 @@ function WhatsAppAnalyzer() {
   else {
     return (
       <div>
-      <AnalysisScreen 
-        logs={logs}
-        setLogs={setLogs}
-        
-      />
+        <Helmet>
+          <style>{'body { background-color: #131c21; }'}</style>
+        </Helmet>
+        <AnalysisScreen 
+          logs={logs}
+          setLogs={setLogs}
+        />
       </div>
     )
   }
