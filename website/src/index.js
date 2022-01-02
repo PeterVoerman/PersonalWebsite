@@ -5,7 +5,6 @@ import reportWebVitals from './reportWebVitals';
 import { BrowserRouter as Router, Route, Routes } from "react-router-dom";
 import {
   NavBar,
-  About,
   Home,
   WhatsAppAnalyzer
 } from './components'
@@ -15,7 +14,6 @@ ReactDOM.render(
     <NavBar />
     <Routes>
       <Route path="/" element={<Home />} />
-      <Route path="/about" element={<About />} />
       <Route path="/whatsappanalyzer" element={<WhatsAppAnalyzer />} />
     </Routes>
   </Router>,
