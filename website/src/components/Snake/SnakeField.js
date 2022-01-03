@@ -16,8 +16,8 @@ function SnakeField() {
   const setup = (p5, canvasParentRef) => {
     p5.createCanvas(Math.round((window.innerWidth - 25) / 50) * 50, Math.round((window.innerHeight - 75) / 50) * 50).parent(canvasParentRef)
     p5.frameRate(frameRate)
-    setSnake(new Snake(0, 0, p5.width, p5.height, size, p5))
-    setFruit(new Fruit(10, 0, p5.width, p5.height, size, p5))
+    setSnake(new Snake(5, 5, p5.width, p5.height, size, p5))
+    setFruit(new Fruit(p5.width, p5.height, size, p5))
 }
 
   function draw(p5) {

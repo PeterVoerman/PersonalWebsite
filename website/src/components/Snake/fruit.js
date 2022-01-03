@@ -1,11 +1,12 @@
 export default class Fruit {
-    constructor(x, y, width, height, size, p5) {
-        this.x = x
-        this.y = y
+    constructor(width, height, size, p5) {
+        this.x = 0
+        this.y = 0
         this.p5 = p5
         this.size = size
         this.width = width / 50
         this.height = height / 50
+        this.newLocation({"body":[]})
     }
 
 

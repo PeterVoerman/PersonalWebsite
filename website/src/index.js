@@ -19,17 +19,17 @@ const theme = createTheme({
 })
 
 ReactDOM.render(
-  <Router>
-    <ThemeProvider theme={theme}>
-    <NavigationBar/>
-    <Routes>
-      <Route path="/" element={<Home/>}/>
-      <Route path='/snake' element={<SnakeField/>}/>
-      <Route path='/fractaltree' element={<FractalTree/>}/>
-      <Route path="/whatsappanalyzer" element={<WhatsAppAnalyzer/>}/>
-    </Routes>
-    </ThemeProvider>
-  </Router>,
+    <Router>
+      <ThemeProvider theme={theme}>
+      <NavigationBar/>
+      <Routes>
+        <Route path="/" element={<Home/>}/>
+        <Route path='/snake' element={<SnakeField/>}/>
+        <Route path='/fractaltree' element={<FractalTree/>}/>
+        <Route path="/whatsappanalyzer" element={<WhatsAppAnalyzer/>}/>
+      </Routes>
+      </ThemeProvider>
+    </Router>,
 
   document.getElementById('root')
 );

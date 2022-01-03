@@ -9,10 +9,7 @@
     "@testing-library/jest-dom": "^5.16.1",
     "@testing-library/react": "^12.1.2",
     "@testing-library/user-event": "^13.5.0",
-    "components": "^0.1.0",
     "emoji.json": "^13.1.0",
-    "plotly": "^1.0.6",
-    "plotly.js": "^2.8.3",
     "rainbowvis.js": "^1.0.1",
     "react": "^17.0.2",
     "react-bootstrap": "^2.1.0",
@@ -25,8 +22,6 @@
     "react-scripts": "5.0.0",
     "react-tagcloud": "^2.2.0",
     "stopwords-json": "^1.2.0",
-    "styled": "^1.0.0",
-    "styled-components": "^5.3.3",
     "web-vitals": "^2.1.2"
   },
   "scripts": {
