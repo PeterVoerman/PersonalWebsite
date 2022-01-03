@@ -145,3 +145,4 @@ anon.session-journal
 
 node_modules/
 .firebase/
+test.py

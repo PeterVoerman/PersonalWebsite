@@ -17,7 +17,7 @@ const theme = createTheme({
 function FractalTree() {
   const [height, setHeight] = useState()
   const [width, setWidth] = useState()
-  const [treeHeightCounter, setTreeHeightCounter] = useState({"height":12, "counter":0})
+  const [treeHeightCounter, setTreeHeightCounter] = useState({"height":10, "counter":0})
   const [p5, setP5] = useState()
 
   const handleTreeHeight = (event) => {
@@ -50,12 +50,13 @@ function FractalTree() {
     p5.createCanvas(window.innerWidth * 5/6, window.innerHeight).parent(canvasParentRef)
     setP5(p5)
     setHeight(window.innerHeight)
+    console.log(window.innerHeight)
     setWidth(window.innerWidth * 5/6)
   }
 
   function draw(p5) {
     let treeHeight = treeHeightCounter['height']
-    lengthIncrement = height / (treeHeight * 9)
+    lengthIncrement = 1.7 * height / (treeHeight * treeHeight)
     p5.clear()
     p5.strokeWeight(10)
     drawLine(p5, p5.width/2, p5.height, p5.width/2, p5.height-50, 0, treeHeight+1)
@@ -116,9 +117,9 @@ function FractalTree() {
           <Sketch setup={setup} draw={draw}/>
         </Col>
         <Col className='fractal-settings'>
-        <ThemeProvider theme={theme}>
-        <TextField id="outlined-basic" label="Number of branches" variant="outlined" onKeyPress={(ev) => {handleTreeHeight(ev)}}/>
-        </ThemeProvider>
+          <ThemeProvider theme={theme}>
+             <TextField error={false} id="outlined-basic" label="Number of branches" variant="outlined" onKeyPress={(ev) => {handleTreeHeight(ev)}}/>
+          </ThemeProvider>
         </Col>
       </Row>
     </Container>
