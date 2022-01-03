@@ -12,14 +12,39 @@ function FractalTree() {
   const [p5, setP5] = useState()
   const [input, setInput] = useState()
   const [errorMessage, setErrorMessage] = useState('')
+  const [numberColors, setNumberColors] = useState(2)
+  const [treeColors, setTreeColors] = useState(["#211300", "#211300", "green"])
+  const [colors, setColors] = useState()
 
   const handleTreeHeight = (event) => {
-    console.log(event)
     if (event.key === 'Enter') {
       setTreeHeightCounter({"height":parseInt(event.target.value), "counter":treeHeightCounter['counter'] + 1})
-      console.log("hoi")
     }
   }
+
+  const handleNumberColors = (event) => {
+    let colorInput = event.target.value
+    if (!isNaN(colorInput)) {
+      console.log(event.target.value)
+    }
+  }
+
+  const findColors = () => {
+    let colorList = []
+    console.log(treeColors)
+
+    gradient.setNumberRange(1, treeHeightCounter["height"])
+    gradient.setSpectrum.apply(this, treeColors)
+    for (let i = 1; i <= treeHeightCounter["height"]; i++) {
+      let color = "#" + gradient.colorAt(i)
+      colorList.push(color)
+    }
+    
+    setColors(colorList)
+    
+  }
+
+
 
   useEffect(() => {
     if (parseInt(input) > 20) {
@@ -34,7 +59,6 @@ function FractalTree() {
   }, [input, errorMessage])
 
   useEffect(() => {
-    console.log("yo")
     treeCoords = []
     if (p5) {
       p5.loop()
@@ -43,32 +67,29 @@ function FractalTree() {
 
   let lengthIncrement
   let treeCoords = []
-  let colors = []
-  
 
-  gradient.setNumberRange(1, treeHeightCounter["height"])
-  gradient.setSpectrum("blue", "lightblue")
-  for (let i = 1; i <= treeHeightCounter["height"]; i++) {
-    let color = "#" + gradient.colorAt(i)
-    colors.push(color)
-  }
+  useEffect(() => {
+    findColors()
+    setTreeHeightCounter({"height":treeHeightCounter["height"], "counter":treeHeightCounter['counter'] + 1})
+  }, [treeColors])
+  
 
   const setup = (p5, canvasParentRef) => {
     p5.createCanvas(window.innerWidth * 5/6, window.innerHeight).parent(canvasParentRef)
     setP5(p5)
     setHeight(window.innerHeight)
-    console.log(window.innerHeight)
     setWidth(window.innerWidth * 5/6)
   }
 
   function draw(p5) {
+    findColors()
     let treeHeight = treeHeightCounter['height']
     lengthIncrement = 1.7 * height / (treeHeight * treeHeight)
     p5.clear()
     p5.strokeWeight(10)
     drawLine(p5, p5.width/2, p5.height, p5.width/2, p5.height-50, 0, treeHeight+1)
 
-    if (treeCoords.length === 0 && width) {
+    if (treeCoords.length === 0 && width && colors.length === treeHeight) {
       p5.noLoop()
       fractalTree(p5, p5.width/2, p5.height-50, 3*p5.HALF_PI, (treeHeight+1)*lengthIncrement, 0, treeHeight)
     }
@@ -114,6 +135,7 @@ function FractalTree() {
     }
   }
 
+
   return (
     <Grid container style={{borderTop: "2px solid #212529"}}>
         <Grid item xs={10}>
@@ -122,12 +144,24 @@ function FractalTree() {
         <Grid item xs={2} style={{borderLeft: "2px solid #212529", alignItems:"center"}}>
           <TextField 
             error={errorMessage !== ""}
-            id="outlined-basic" 
+            id="n-branches" 
             label="Number of branches" 
             helperText={errorMessage}
             variant="outlined" 
             onChange={(ev) => {setInput(ev.target.value)}}
             onKeyDown={(ev) => {handleTreeHeight(ev)}}
+            style={{margin:'1vw'}}
+          />
+          <TextField 
+            id="colors" 
+            label="Colors" 
+            variant="outlined" 
+            helperText="color,color,..."
+            onKeyDown={(ev) => {
+              if (ev.key === "Enter") {
+                setTreeColors(ev.target.value.split(","))
+                }
+            }}
             style={{margin:'1vw'}}
           />
         </Grid >
