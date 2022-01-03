@@ -1,71 +1,70 @@
-import React, { useEffect, useState } from 'react'
+import React, { useState, useEffect } from 'react'
+import { Container, Row, Col } from 'react-bootstrap'
 import Sketch from 'react-p5'
-import Helmet from 'react-helmet'
+import { TextField, createTheme, ThemeProvider } from '@mui/material'
 
 import './fractaltree.css'
 
 let Rainbow = require('rainbowvis.js')
 let gradient = new Rainbow()
 
-function getWindowDimensions() {
-  const { innerWidth: width, innerHeight: height } = window;
-  return {
-    width,
-    height
-  };
-}
-
-function useWindowDimensions() {
-  const [windowDimensions, setWindowDimensions] = useState(
-    getWindowDimensions()
-  );
-
-  useEffect(() => {
-    function handleResize() {
-      setWindowDimensions(getWindowDimensions());
-    }
-
-    window.addEventListener("resize", handleResize);
-    return () => window.removeEventListener("resize", handleResize);
-  }, []);
-
-  return windowDimensions;
-}
-
+const theme = createTheme({
+  palette: {
+    mode: 'dark',
+  },
+})
 
 function FractalTree() {
+  const [height, setHeight] = useState()
+  const [width, setWidth] = useState()
+  const [treeHeightCounter, setTreeHeightCounter] = useState({"height":12, "counter":0})
+  const [p5, setP5] = useState()
 
-  const { height, width } = useWindowDimensions();
+  const handleTreeHeight = (event) => {
+    if (event.key === 'Enter') {
+      setTreeHeightCounter({"height":parseInt(event.target.value), "counter":treeHeightCounter['counter'] + 1})
+      
+    }
+  }
 
+  useEffect(() => {
+    treeCoords = []
+    if (p5) {
+      p5.loop()
+    }
+  }, [treeHeightCounter])
+
+  let lengthIncrement
   let treeCoords = []
   let colors = []
-  let treeHeight = 15
-  let lengthIncrement = height / 130
+  
 
-  gradient.setNumberRange(1, treeHeight)
+  gradient.setNumberRange(1, treeHeightCounter["height"])
   gradient.setSpectrum("blue", "lightblue")
-  for (let i = 1; i <= treeHeight; i++) {
+  for (let i = 1; i <= treeHeightCounter["height"]; i++) {
     let color = "#" + gradient.colorAt(i)
     colors.push(color)
   }
 
   const setup = (p5, canvasParentRef) => {
-    p5.createCanvas(width-2, height-2).parent(canvasParentRef)
-    p5.noLoop()
-    
+    p5.createCanvas(window.innerWidth * 5/6, window.innerHeight).parent(canvasParentRef)
+    setP5(p5)
+    setHeight(window.innerHeight)
+    setWidth(window.innerWidth * 5/6)
   }
 
   function draw(p5) {
-    p5.background(0);
-
+    let treeHeight = treeHeightCounter['height']
+    lengthIncrement = height / (treeHeight * 9)
+    p5.clear()
     p5.strokeWeight(10)
     drawLine(p5, p5.width/2, p5.height, p5.width/2, p5.height-50, 0, treeHeight+1)
 
-    if (treeCoords.length === 0) {
+    if (treeCoords.length === 0 && width) {
+      p5.noLoop()
       fractalTree(p5, p5.width/2, p5.height-50, 3*p5.HALF_PI, (treeHeight+1)*lengthIncrement, 0, treeHeight)
     }
 
-    
     treeCoords.forEach((coords) => {
       drawLine(p5, coords[0], coords[1], coords[2], coords[3], coords[4], treeHeight)
     })
@@ -109,16 +108,23 @@ function FractalTree() {
   
   
 
-  if (width) {
-    return (
-      <div  className='fractaltree'>
-        <Helmet>
-                <style>{'body { overflow: hidden; }'}</style>
-          </Helmet>
-        <Sketch setup={setup} draw={draw}/>
-      </div>
-    )
-  }
+  return (
+    
+    <Container className='fractal-container'>
+      <Row>
+        <Col className='fractaltree' xs={10}>
+          <Sketch setup={setup} draw={draw}/>
+        </Col>
+        <Col className='fractal-settings'>
+        <ThemeProvider theme={theme}>
+        <TextField id="outlined-basic" label="Number of branches" variant="outlined" onKeyPress={(ev) => {handleTreeHeight(ev)}}/>
+        </ThemeProvider>
+        </Col>
+      </Row>
+    </Container>
+    
+  )
+  
 }
 
 
