@@ -1,31 +1,37 @@
 import React, { useState, useEffect } from 'react'
-import { Container, Row, Col } from 'react-bootstrap'
 import Sketch from 'react-p5'
-import { TextField, createTheme, ThemeProvider } from '@mui/material'
-
-import './fractaltree.css'
+import { TextField, Grid } from '@mui/material'
 
 let Rainbow = require('rainbowvis.js')
 let gradient = new Rainbow()
-
-const theme = createTheme({
-  palette: {
-    mode: 'dark',
-  },
-})
 
 function FractalTree() {
   const [height, setHeight] = useState()
   const [width, setWidth] = useState()
   const [treeHeightCounter, setTreeHeightCounter] = useState({"height":10, "counter":0})
   const [p5, setP5] = useState()
+  const [input, setInput] = useState()
+  const [errorMessage, setErrorMessage] = useState('')
 
   const handleTreeHeight = (event) => {
+    setInput(event.target.value)
     if (event.key === 'Enter') {
       setTreeHeightCounter({"height":parseInt(event.target.value), "counter":treeHeightCounter['counter'] + 1})
-      
     }
   }
+
+  useEffect(() => {
+    console.log(input)
+    if (parseInt(input) > 20) {
+      setErrorMessage("You'll have to wait a long time with a high number of branches")
+    }
+  }, [input])
+
+  useEffect(() => {
+    if (parseInt(input) < 20 && errorMessage) {
+      setErrorMessage("")
+    }
+  }, [input, errorMessage])
 
   useEffect(() => {
     treeCoords = []
@@ -106,26 +112,27 @@ function FractalTree() {
       fractalTree(p5, coords2[0], coords2[1], angle2, newLength, counter, treeHeight)
     }
   }
-  
-  
 
   return (
-    
-    <Container className='fractal-container'>
-      <Row>
-        <Col className='fractaltree' xs={10}>
+    <Grid container style={{borderTop: "2px solid #212529"}}>
+        <Grid item xs={10}>
           <Sketch setup={setup} draw={draw}/>
-        </Col>
-        <Col className='fractal-settings'>
-          <ThemeProvider theme={theme}>
-             <TextField error={false} id="outlined-basic" label="Number of branches" variant="outlined" onKeyPress={(ev) => {handleTreeHeight(ev)}}/>
-          </ThemeProvider>
-        </Col>
-      </Row>
-    </Container>
-    
+        </Grid>
+        <Grid item xs={2} style={{borderLeft: "2px solid #212529", alignItems:"center"}}>
+          <TextField 
+            error={errorMessage}
+            id="outlined-basic" 
+            label="Number of branches" 
+            helperText={errorMessage}
+            variant="outlined" 
+            onChange={(ev) => {
+              handleTreeHeight(ev)
+            }}
+            style={{margin:'1vw'}}
+          />
+        </Grid >
+    </Grid>
   )
-  
 }
 
 

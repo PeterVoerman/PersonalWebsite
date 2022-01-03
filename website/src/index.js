@@ -3,6 +3,7 @@ import ReactDOM from 'react-dom';
 import './index.css';
 import reportWebVitals from './reportWebVitals';
 import { BrowserRouter as Router, Route, Routes } from "react-router-dom";
+import { createTheme, ThemeProvider } from '@mui/material';
 import {
   NavigationBar,
   Home,
@@ -11,8 +12,15 @@ import {
   FractalTree
 } from './components'
 
+const theme = createTheme({
+  palette: {
+    mode: 'dark',
+  },
+})
+
 ReactDOM.render(
   <Router>
+    <ThemeProvider theme={theme}>
     <NavigationBar/>
     <Routes>
       <Route path="/" element={<Home/>}/>
@@ -20,6 +28,7 @@ ReactDOM.render(
       <Route path='/fractaltree' element={<FractalTree/>}/>
       <Route path="/whatsappanalyzer" element={<WhatsAppAnalyzer/>}/>
     </Routes>
+    </ThemeProvider>
   </Router>,
 
   document.getElementById('root')

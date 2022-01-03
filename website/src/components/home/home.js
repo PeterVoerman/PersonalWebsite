@@ -1,11 +1,14 @@
+import { ThemeProvider } from "@emotion/react";
+import { Typography } from "@mui/material";
 import React from "react";
-import './homepage.css'
+
 
 function Home() {
+
   return (
-    <div className="homepage">
+    <Typography variant="h1" color="common.white" margin={5}>
       Homepage of Peter Voerman
-    </div>
+    </Typography>
   );
 }
 
