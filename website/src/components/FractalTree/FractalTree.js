@@ -8,20 +8,20 @@ let gradient = new Rainbow()
 function FractalTree() {
   const [height, setHeight] = useState()
   const [width, setWidth] = useState()
-  const [treeHeightCounter, setTreeHeightCounter] = useState({"height":10, "counter":0})
+  const [treeHeightCounter, setTreeHeightCounter] = useState({"height":13, "counter":0})
   const [p5, setP5] = useState()
   const [input, setInput] = useState()
   const [errorMessage, setErrorMessage] = useState('')
 
   const handleTreeHeight = (event) => {
-    setInput(event.target.value)
+    console.log(event)
     if (event.key === 'Enter') {
       setTreeHeightCounter({"height":parseInt(event.target.value), "counter":treeHeightCounter['counter'] + 1})
+      console.log("hoi")
     }
   }
 
   useEffect(() => {
-    console.log(input)
     if (parseInt(input) > 20) {
       setErrorMessage("You'll have to wait a long time with a high number of branches")
     }
@@ -34,6 +34,7 @@ function FractalTree() {
   }, [input, errorMessage])
 
   useEffect(() => {
+    console.log("yo")
     treeCoords = []
     if (p5) {
       p5.loop()
@@ -120,14 +121,13 @@ function FractalTree() {
         </Grid>
         <Grid item xs={2} style={{borderLeft: "2px solid #212529", alignItems:"center"}}>
           <TextField 
-            error={errorMessage}
+            error={errorMessage !== ""}
             id="outlined-basic" 
             label="Number of branches" 
             helperText={errorMessage}
             variant="outlined" 
-            onChange={(ev) => {
-              handleTreeHeight(ev)
-            }}
+            onChange={(ev) => {setInput(ev.target.value)}}
+            onKeyDown={(ev) => {handleTreeHeight(ev)}}
             style={{margin:'1vw'}}
           />
         </Grid >
