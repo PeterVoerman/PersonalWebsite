@@ -247,10 +247,12 @@ function FractalTree() {
           />
           <FormHelperText sx={{mt:-1, ml:7}}>Click again to stop animating</FormHelperText>
           <TextField 
-          label="Animation time (s)"
-          disabled={!animation || animating}
-          onChange={(ev) => confirmAnimationTime(ev)}
-          sx = {{m:2}}
+            error={animationTimeError !== ""}
+            label="Animation time (s)"
+            helperText={animationTimeError}
+            disabled={!animation || animating}
+            onChange={(ev) => confirmAnimationTime(ev)}
+            sx = {{m:2}}
           />
           <Button
             variant="outlined"
