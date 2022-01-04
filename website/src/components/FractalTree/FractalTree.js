@@ -13,7 +13,7 @@ function FractalTree() {
   
   const [treeCounter, setTreeCounter] = useState(0)
   
-  const [treeHeight, setTreeHeight] = useState(6)
+  const [treeHeight, setTreeHeight] = useState(13)
   const [heightError, setHeightError] = useState('')
 
   const [treeColors, setTreeColors] = useState(["#211300", "#211300", "green"])
@@ -22,6 +22,9 @@ function FractalTree() {
 
   const [animation, setAnimation] = useState(false)
   const [animating, setAnimating] = useState(false)
+  const [animationTime, setAnimationTime] = useState(4)
+  const [animationTimeError, setAnimationTimeError] = useState("")
+  const [branchesPerFrame, setBranchesPerFrame] = useState(1)
 
 
   // Confiurm tree height is valid input
@@ -63,6 +66,20 @@ function FractalTree() {
       }
       setTreeColors(colorArray)
     }
+  })
+
+  const confirmAnimationTime = ((event) => {
+    let input = event.target.value
+    setAnimationTimeError("")
+    if (isNaN(input)) {
+      setAnimationTimeError("Please enter a number")
+      return
+    }
+    if (parseInt(input) < 1) {
+      setAnimationTimeError("Please enter a number greater than 1")
+      return
+    }
+    setAnimationTime(parseInt(input))
   })
 
   const generateTree = (() => {
@@ -116,15 +133,16 @@ function FractalTree() {
 
   function draw(p5) {
     lengthIncrement = 1.7 * height / (treeHeight * treeHeight)
-    p5.clear()
-    p5.strokeWeight(10)
-    drawLine(p5, p5.width/2, p5.height, p5.width/2, p5.height-50, 0, treeHeight+1)
+    
+    
 
     if (treeCoords.length === 0 && width && colors.length === treeHeight && animationCounter === 0) {
+      p5.clear()
       console.log(animationCounter)
       fractalTree(p5, p5.width/2, p5.height-50, 3*p5.HALF_PI, (treeHeight+1)*lengthIncrement, 0, treeHeight)
       nBranches = Math.pow(2, treeHeight+1)
       animationCounter = 0
+      setBranchesPerFrame(nBranches / (60 * animationTime))
 
       if (!animation) {
         p5.noLoop()
@@ -133,17 +151,21 @@ function FractalTree() {
       }
     }
 
+    p5.strokeWeight(10)
+    drawLine(p5, p5.width/2, p5.height, p5.width/2, p5.height-50, 0, treeHeight+1)
+
     if (!animation) {
       treeCoords.forEach((coords) => {
         drawLine(p5, coords[0], coords[1], coords[2], coords[3], coords[4], treeHeight)
       })
     } else {
-      animationCounter++
-      treeCoords.slice(0, animationCounter).forEach((coords) => {
+      
+      animationCounter += branchesPerFrame
+      treeCoords.slice(animationCounter - branchesPerFrame, animationCounter).forEach((coords) => {
         drawLine(p5, coords[0], coords[1], coords[2], coords[3], coords[4], treeHeight)
       })
 
-      if (animationCounter === nBranches) {
+      if (animationCounter > nBranches) {
         p5.noLoop()
         setAnimating(false)
       }
@@ -224,6 +246,12 @@ function FractalTree() {
           }
           />
           <FormHelperText sx={{mt:-1, ml:7}}>Click again to stop animating</FormHelperText>
+          <TextField 
+          label="Animation time (s)"
+          disabled={!animation || animating}
+          onChange={(ev) => confirmAnimationTime(ev)}
+          sx = {{m:2}}
+          />
           <Button
             variant="outlined"
             sx={{m:2}}
@@ -231,6 +259,7 @@ function FractalTree() {
           >
             Generate
           </Button>
+          
         </Grid >
     </Grid>
   )
