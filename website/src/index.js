@@ -9,7 +9,8 @@ import {
   Home,
   WhatsAppAnalyzer,
   SnakeField,
-  FractalTree
+  FractalTree,
+  SolarSystem
 } from './components'
 
 const theme = createTheme({
@@ -26,6 +27,7 @@ ReactDOM.render(
         <Route path="/" element={<Home/>}/>
         <Route path='/snake' element={<SnakeField/>}/>
         <Route path='/fractaltree' element={<FractalTree/>}/>
+        <Route path='/solarsystem' element={<SolarSystem/>}/>
         <Route path="/whatsappanalyzer" element={<WhatsAppAnalyzer/>}/>
       </Routes>
       </ThemeProvider>

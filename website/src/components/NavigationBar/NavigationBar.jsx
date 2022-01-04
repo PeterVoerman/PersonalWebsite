@@ -16,6 +16,7 @@ const NavigationBar = () => {
                 <Link className="link" to="/">Home</Link>
                 <Link className='link' to="/snake">Snake</Link>
                 <Link className='link' to="/fractaltree">Fractal Tree</Link>
+                <Link className='link' to="/solarsystem">Solar System</Link>
                 <Link className="link" to="/whatsappanalyzer">WhatsApp Analyzer</Link>
             </Nav>
           </Navbar.Collapse>

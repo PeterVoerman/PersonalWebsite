@@ -6,7 +6,7 @@ let Rainbow = require('rainbowvis.js')
 let gradient = new Rainbow()
 
 function FractalTree() {
-
+  
   const [p5, setP5] = useState()
   const [height, setHeight] = useState()
   const [width, setWidth] = useState()
@@ -107,15 +107,18 @@ function FractalTree() {
   useEffect(() => {
     findColors()
     console.log(treeColors)
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [treeColors])
 
   // Generate new tree
   useEffect(() => {
+    // eslint-disable-next-line react-hooks/exhaustive-deps
     treeCoords = []
     findColors()
     if (p5) {
       p5.loop()
     }
+    
   }, [treeCounter])
 
 
@@ -125,16 +128,14 @@ function FractalTree() {
   let treeCoords = []
 
   const setup = (p5, canvasParentRef) => {
-    p5.createCanvas(window.innerWidth * 5/6, window.innerHeight).parent(canvasParentRef)
+    p5.createCanvas(window.innerWidth * 5/6, window.innerHeight - 50).parent(canvasParentRef)
     setP5(p5)
     setHeight(window.innerHeight)
-    setWidth(window.innerWidth * 5/6)
+    setWidth(window.innerWidth * 5 / 6)
   }
 
   function draw(p5) {
-    lengthIncrement = 1.7 * height / (treeHeight * treeHeight)
-    
-    
+    lengthIncrement = 1.6 * height / (treeHeight * treeHeight)
 
     if (treeCoords.length === 0 && width && colors.length === treeHeight && animationCounter === 0) {
       p5.clear()
