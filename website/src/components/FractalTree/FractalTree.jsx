@@ -1,12 +1,12 @@
 import React, { useState, useEffect } from 'react'
 import Sketch from 'react-p5'
-import { TextField, Grid, Checkbox, FormControlLabel, Button, FormHelperText } from '@mui/material'
+import { TextField, Grid, Checkbox, FormControlLabel, Button, FormHelperText, useMediaQuery } from '@mui/material'
 
 let Rainbow = require('rainbowvis.js')
 let gradient = new Rainbow()
 
 function FractalTree() {
-  
+
   const [p5, setP5] = useState()
   const [height, setHeight] = useState()
   const [width, setWidth] = useState()
@@ -20,12 +20,13 @@ function FractalTree() {
   const [colors, setColors] = useState()
   const [colorError, setColorError] = useState("")
 
-  const [animation, setAnimation] = useState(false)
+  const [animation, setAnimation] = useState(true)
   const [animating, setAnimating] = useState(false)
-  const [animationTime, setAnimationTime] = useState(4)
+  const [animationTime, setAnimationTime] = useState(3)
   const [animationTimeError, setAnimationTimeError] = useState("")
   const [branchesPerFrame, setBranchesPerFrame] = useState(1)
 
+  const smallScreen = !useMediaQuery('(min-width:600px)')
 
   // Confiurm tree height is valid input
   const confirmHeight = ((event) => {
@@ -91,7 +92,6 @@ function FractalTree() {
   // find gradient for provided colors and tree height
   const findColors = () => {
     let colorList = []
-    console.log(treeColors)
 
     gradient.setNumberRange(1, treeHeight)
     gradient.setSpectrum.apply(this, treeColors)
@@ -106,13 +106,10 @@ function FractalTree() {
   // Update color gradient when new colors are provied
   useEffect(() => {
     findColors()
-    console.log(treeColors)
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [treeColors])
 
   // Generate new tree
   useEffect(() => {
-    // eslint-disable-next-line react-hooks/exhaustive-deps
     treeCoords = []
     findColors()
     if (p5) {
@@ -128,10 +125,17 @@ function FractalTree() {
   let treeCoords = []
 
   const setup = (p5, canvasParentRef) => {
-    p5.createCanvas(window.innerWidth * 5/6, window.innerHeight - 50).parent(canvasParentRef)
+    let proportion
+    if (smallScreen) {
+      proportion = 2 / 3
+    } else {
+      proportion = 5 / 6
+    }
+    
+    p5.createCanvas(window.innerWidth * proportion, window.innerHeight - 50).parent(canvasParentRef)
     setP5(p5)
     setHeight(window.innerHeight)
-    setWidth(window.innerWidth * 5 / 6)
+    setWidth(window.innerWidth * proportion)
   }
 
   function draw(p5) {
@@ -139,7 +143,6 @@ function FractalTree() {
 
     if (treeCoords.length === 0 && width && colors.length === treeHeight && animationCounter === 0) {
       p5.clear()
-      console.log(animationCounter)
       fractalTree(p5, p5.width/2, p5.height-50, 3*p5.HALF_PI, (treeHeight+1)*lengthIncrement, 0, treeHeight)
       nBranches = Math.pow(2, treeHeight+1)
       animationCounter = 0
@@ -210,10 +213,10 @@ function FractalTree() {
 
   return (
     <Grid container style={{borderTop: "2px solid #212529"}}>
-        <Grid item xs={10}>
+        <Grid item xs={8} sm={10}>
           <Sketch setup={setup} draw={draw}/>
         </Grid>
-        <Grid item xs={2} sx={{borderLeft: "2px solid #212529", display:"flex", flexDirection:"column"}}>
+        <Grid item sm={2} xs={4} sx={{borderLeft: "2px solid #212529", display:"flex", flexDirection:"column"}}>
           <TextField 
             error={heightError !== ""}
             id="n-branches" 
@@ -240,6 +243,7 @@ function FractalTree() {
             sx={{color:"gray", m:1}}
             control={
           <Checkbox
+            defaultChecked={true}
             onChange={() => {
               setAnimation(!animation)
               setAnimating(false)}}
