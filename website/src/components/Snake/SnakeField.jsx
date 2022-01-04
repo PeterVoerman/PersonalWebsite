@@ -4,8 +4,6 @@ import Sketch from 'react-p5'
 import Snake from './snake'
 import Fruit from './fruit'
 
-import './Snake.css'
-
 function SnakeField() {
   const [snake, setSnake] = useState()
   const [fruit, setFruit] = useState()

@@ -19,14 +19,10 @@ export default class Fruit {
         this.x = this.p5.floor(this.p5.random(0, this.width))
         this.y = this.p5.floor(this.p5.random(0, this.height))
         
-        let inBody = false
-        snake.body.forEach((bodyPart) => {
-            if (this.x === bodyPart.x && this.y === bodyPart.y) {
-                inBody = true
-            }
-        })
+        let inBody = true
 
         while (inBody) {
+            console.log(inBody)
             inBody = false
             snake.body.forEach((bodyPart) => {
                 if (this.x === bodyPart.x && this.y === bodyPart.y) {
