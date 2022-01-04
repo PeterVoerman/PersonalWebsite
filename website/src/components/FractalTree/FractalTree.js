@@ -1,21 +1,27 @@
 import React, { useState, useEffect } from 'react'
 import Sketch from 'react-p5'
-import { TextField, Grid } from '@mui/material'
+import { TextField, Grid, Checkbox, FormControlLabel, Button, FormHelperText } from '@mui/material'
 
 let Rainbow = require('rainbowvis.js')
 let gradient = new Rainbow()
 
 function FractalTree() {
+
+  const [p5, setP5] = useState()
   const [height, setHeight] = useState()
   const [width, setWidth] = useState()
-  const [treeHeight, setTreeHeight] = useState(13)
+  
   const [treeCounter, setTreeCounter] = useState(0)
-  const [p5, setP5] = useState()
+  
+  const [treeHeight, setTreeHeight] = useState(6)
   const [heightError, setHeightError] = useState('')
-  const [numberColors, setNumberColors] = useState(2)
+
   const [treeColors, setTreeColors] = useState(["#211300", "#211300", "green"])
   const [colors, setColors] = useState()
   const [colorError, setColorError] = useState("")
+
+  const [animation, setAnimation] = useState(false)
+  const [animating, setAnimating] = useState(false)
 
 
   // Confiurm tree height is valid input
@@ -28,16 +34,17 @@ function FractalTree() {
     }
     if (parseInt(input) > 15) {
       setHeightError("Waiting times grow exponentially")
-      return
     }
     if (parseInt(input) < 2) {
       setHeightError("Please enter a number greater than 1")
       return
     }
+    setTreeHeight(parseInt(input))
   })
 
   // Confirm colors is valid input
   const confirmColors = ((event) => {
+    let error = false
     let colorArray = event.target.value.replace(/\s+/g, '').split(",")
     setColorError("")
     colorArray.forEach((color) => {
@@ -46,14 +53,28 @@ function FractalTree() {
 
       if (s.color === '') {
         setColorError("Please enter valid colors")
+        error = true
       }
     })
 
+    if (!error) {
+      if (colorArray.length === 1) {
+        colorArray.push(colorArray[0])
+      }
+      setTreeColors(colorArray)
+    }
+  })
+
+  const generateTree = (() => {
+    if ((heightError === "" || heightError === "Waiting times grow exponentially") && colorError === "") {
+      setTreeCounter(treeCounter + 1)
+    }
   })
 
   // find gradient for provided colors and tree height
   const findColors = () => {
     let colorList = []
+    console.log(treeColors)
 
     gradient.setNumberRange(1, treeHeight)
     gradient.setSpectrum.apply(this, treeColors)
@@ -68,12 +89,13 @@ function FractalTree() {
   // Update color gradient when new colors are provied
   useEffect(() => {
     findColors()
-    setTreeCounter(treeCounter + 1)
+    console.log(treeColors)
   }, [treeColors])
 
   // Generate new tree
   useEffect(() => {
     treeCoords = []
+    findColors()
     if (p5) {
       p5.loop()
     }
@@ -81,6 +103,8 @@ function FractalTree() {
 
 
   let lengthIncrement
+  let nBranches
+  let animationCounter = 0
   let treeCoords = []
 
   const setup = (p5, canvasParentRef) => {
@@ -91,20 +115,39 @@ function FractalTree() {
   }
 
   function draw(p5) {
-    findColors()
     lengthIncrement = 1.7 * height / (treeHeight * treeHeight)
     p5.clear()
     p5.strokeWeight(10)
     drawLine(p5, p5.width/2, p5.height, p5.width/2, p5.height-50, 0, treeHeight+1)
 
-    if (treeCoords.length === 0 && width && colors.length === treeHeight) {
-      p5.noLoop()
+    if (treeCoords.length === 0 && width && colors.length === treeHeight && animationCounter === 0) {
+      console.log(animationCounter)
       fractalTree(p5, p5.width/2, p5.height-50, 3*p5.HALF_PI, (treeHeight+1)*lengthIncrement, 0, treeHeight)
+      nBranches = Math.pow(2, treeHeight+1)
+      animationCounter = 0
+
+      if (!animation) {
+        p5.noLoop()
+      } else {
+        setAnimating(true)
+      }
     }
 
-    treeCoords.forEach((coords) => {
-      drawLine(p5, coords[0], coords[1], coords[2], coords[3], coords[4], treeHeight)
-    })
+    if (!animation) {
+      treeCoords.forEach((coords) => {
+        drawLine(p5, coords[0], coords[1], coords[2], coords[3], coords[4], treeHeight)
+      })
+    } else {
+      animationCounter++
+      treeCoords.slice(0, animationCounter).forEach((coords) => {
+        drawLine(p5, coords[0], coords[1], coords[2], coords[3], coords[4], treeHeight)
+      })
+
+      if (animationCounter === nBranches) {
+        p5.noLoop()
+        setAnimating(false)
+      }
+    }
   }
 
   function drawLine(p5, x, y, xEnd, yEnd, counter, treeHeight) {
@@ -147,40 +190,47 @@ function FractalTree() {
         <Grid item xs={10}>
           <Sketch setup={setup} draw={draw}/>
         </Grid>
-        <Grid item xs={2} style={{borderLeft: "2px solid #212529", alignItems:"center"}}>
+        <Grid item xs={2} sx={{borderLeft: "2px solid #212529", display:"flex", flexDirection:"column"}}>
           <TextField 
             error={heightError !== ""}
             id="n-branches" 
             label="Number of branches" 
             helperText={heightError}
             variant="outlined" 
+            disabled={animating}
             onChange={(ev) => confirmHeight(ev)}
-            onKeyDown={(ev) => {
-              if (ev.key === "Enter" && (heightError === "" || heightError === "Waiting times grow exponentially")) {
-                setTreeHeight(parseInt(ev.target.value))
-                setTreeCounter(treeCounter + 1)
-              }
-            }}
-            style={{margin:'1vw'}}
+            sx={{m:2}}
           />
           <TextField 
             error={colorError !== ""}
-            helperText={colorError === "" ? "color,color,...": colorError}
+            helperText={colorError === "" ? "Eg. blue, lightblue, white": colorError}
             id="colors" 
             label="Colors" 
             variant="outlined" 
+            disabled={animating}
             onChange={(ev) => confirmColors(ev)}
-            onKeyDown={(ev) => {
-              if (ev.key === "Enter" && colorError === "") {
-                let colors = ev.target.value.replace(/\s+/g, '').split(",")
-                if (colors.length === 1) {
-                  colors.push(colors[0])
-                }
-                setTreeColors(colors)
-                }
-            }}
-            style={{margin:'1vw'}}
+            sx={{m:2}}
           />
+
+          <FormControlLabel 
+            label="Animation" 
+            sx={{color:"gray", m:1}}
+            control={
+          <Checkbox
+            onChange={() => {
+              setAnimation(!animation)
+              setAnimating(false)}}
+          />
+          }
+          />
+          <FormHelperText sx={{mt:-1, ml:7}}>Click again to stop animating</FormHelperText>
+          <Button
+            variant="outlined"
+            sx={{m:2}}
+            onClick={() => generateTree()}
+          >
+            Generate
+          </Button>
         </Grid >
     </Grid>
   )
