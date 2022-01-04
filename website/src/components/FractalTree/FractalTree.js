@@ -8,71 +8,80 @@ let gradient = new Rainbow()
 function FractalTree() {
   const [height, setHeight] = useState()
   const [width, setWidth] = useState()
-  const [treeHeightCounter, setTreeHeightCounter] = useState({"height":13, "counter":0})
+  const [treeHeight, setTreeHeight] = useState(13)
+  const [treeCounter, setTreeCounter] = useState(0)
   const [p5, setP5] = useState()
-  const [input, setInput] = useState()
-  const [errorMessage, setErrorMessage] = useState('')
+  const [heightError, setHeightError] = useState('')
   const [numberColors, setNumberColors] = useState(2)
   const [treeColors, setTreeColors] = useState(["#211300", "#211300", "green"])
   const [colors, setColors] = useState()
+  const [colorError, setColorError] = useState("")
 
-  const handleTreeHeight = (event) => {
-    if (event.key === 'Enter') {
-      setTreeHeightCounter({"height":parseInt(event.target.value), "counter":treeHeightCounter['counter'] + 1})
+
+  // Confiurm tree height is valid input
+  const confirmHeight = ((event) => {
+    let input = event.target.value
+    setHeightError("")
+    if (isNaN(input)) {
+      setHeightError("Please enter a number")
+      return
     }
-  }
-
-  const handleNumberColors = (event) => {
-    let colorInput = event.target.value
-    if (!isNaN(colorInput)) {
-      console.log(event.target.value)
+    if (parseInt(input) > 15) {
+      setHeightError("Waiting times grow exponentially")
+      return
     }
-  }
+    if (parseInt(input) < 2) {
+      setHeightError("Please enter a number greater than 1")
+      return
+    }
+  })
 
+  // Confirm colors is valid input
+  const confirmColors = ((event) => {
+    let colorArray = event.target.value.replace(/\s+/g, '').split(",")
+    setColorError("")
+    colorArray.forEach((color) => {
+      let s = new Option().style
+      s.color = color
+
+      if (s.color === '') {
+        setColorError("Please enter valid colors")
+      }
+    })
+
+  })
+
+  // find gradient for provided colors and tree height
   const findColors = () => {
     let colorList = []
-    console.log(treeColors)
 
-    gradient.setNumberRange(1, treeHeightCounter["height"])
+    gradient.setNumberRange(1, treeHeight)
     gradient.setSpectrum.apply(this, treeColors)
-    for (let i = 1; i <= treeHeightCounter["height"]; i++) {
+    for (let i = 1; i <= treeHeight; i++) {
       let color = "#" + gradient.colorAt(i)
       colorList.push(color)
     }
     
     setColors(colorList)
-    
   }
 
-
-
+  // Update color gradient when new colors are provied
   useEffect(() => {
-    if (parseInt(input) > 20) {
-      setErrorMessage("You'll have to wait a long time with a high number of branches")
-    }
-  }, [input])
+    findColors()
+    setTreeCounter(treeCounter + 1)
+  }, [treeColors])
 
-  useEffect(() => {
-    if (parseInt(input) < 20 && errorMessage) {
-      setErrorMessage("")
-    }
-  }, [input, errorMessage])
-
+  // Generate new tree
   useEffect(() => {
     treeCoords = []
     if (p5) {
       p5.loop()
     }
-  }, [treeHeightCounter])
+  }, [treeCounter])
+
 
   let lengthIncrement
   let treeCoords = []
-
-  useEffect(() => {
-    findColors()
-    setTreeHeightCounter({"height":treeHeightCounter["height"], "counter":treeHeightCounter['counter'] + 1})
-  }, [treeColors])
-  
 
   const setup = (p5, canvasParentRef) => {
     p5.createCanvas(window.innerWidth * 5/6, window.innerHeight).parent(canvasParentRef)
@@ -83,7 +92,6 @@ function FractalTree() {
 
   function draw(p5) {
     findColors()
-    let treeHeight = treeHeightCounter['height']
     lengthIncrement = 1.7 * height / (treeHeight * treeHeight)
     p5.clear()
     p5.strokeWeight(10)
@@ -97,8 +105,6 @@ function FractalTree() {
     treeCoords.forEach((coords) => {
       drawLine(p5, coords[0], coords[1], coords[2], coords[3], coords[4], treeHeight)
     })
-    
-  
   }
 
   function drawLine(p5, x, y, xEnd, yEnd, counter, treeHeight) {
@@ -143,23 +149,34 @@ function FractalTree() {
         </Grid>
         <Grid item xs={2} style={{borderLeft: "2px solid #212529", alignItems:"center"}}>
           <TextField 
-            error={errorMessage !== ""}
+            error={heightError !== ""}
             id="n-branches" 
             label="Number of branches" 
-            helperText={errorMessage}
+            helperText={heightError}
             variant="outlined" 
-            onChange={(ev) => {setInput(ev.target.value)}}
-            onKeyDown={(ev) => {handleTreeHeight(ev)}}
+            onChange={(ev) => confirmHeight(ev)}
+            onKeyDown={(ev) => {
+              if (ev.key === "Enter" && (heightError === "" || heightError === "Waiting times grow exponentially")) {
+                setTreeHeight(parseInt(ev.target.value))
+                setTreeCounter(treeCounter + 1)
+              }
+            }}
             style={{margin:'1vw'}}
           />
           <TextField 
+            error={colorError !== ""}
+            helperText={colorError === "" ? "color,color,...": colorError}
             id="colors" 
             label="Colors" 
             variant="outlined" 
-            helperText="color,color,..."
+            onChange={(ev) => confirmColors(ev)}
             onKeyDown={(ev) => {
-              if (ev.key === "Enter") {
-                setTreeColors(ev.target.value.split(","))
+              if (ev.key === "Enter" && colorError === "") {
+                let colors = ev.target.value.replace(/\s+/g, '').split(",")
+                if (colors.length === 1) {
+                  colors.push(colors[0])
+                }
+                setTreeColors(colors)
                 }
             }}
             style={{margin:'1vw'}}
