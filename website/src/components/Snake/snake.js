@@ -3,8 +3,8 @@ export default class Snake {
         
         this.oldBody = this.body
         this.p5 = p5
-        this.height = height / 50
-        this.width = width / 50
+        this.height = height / size
+        this.width = width / size
 
         this.size = size
         this.vel = 1

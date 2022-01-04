@@ -9,15 +9,19 @@ import './Snake.css'
 function SnakeField() {
   const [snake, setSnake] = useState()
   const [fruit, setFruit] = useState()
-  const [size, setSize] = useState(50)
   const [frameRate, setFrameRate] = useState(5)
   let dirChanged
 
   const setup = (p5, canvasParentRef) => {
-    p5.createCanvas(Math.round((window.innerWidth - 25) / 50) * 50, Math.round((window.innerHeight - 75) / 50) * 50).parent(canvasParentRef)
+    let sizeRatio = 30
+    let width = Math.round((window.innerWidth - sizeRatio / 2) / sizeRatio) * sizeRatio
+    let size = width / sizeRatio
+    let height = Math.round((window.innerHeight - size * 1.5) / size) * size
+
+    p5.createCanvas(width, height).parent(canvasParentRef)
     p5.frameRate(frameRate)
-    setSnake(new Snake(5, 5, p5.width, p5.height, size, p5))
-    setFruit(new Fruit(p5.width, p5.height, size, p5))
+    setSnake(new Snake(5, 5, p5.width, p5.height, p5.width/sizeRatio, p5))
+    setFruit(new Fruit(p5.width, p5.height, p5.width/sizeRatio, p5))
 }
 
   function draw(p5) {

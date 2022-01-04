@@ -4,8 +4,8 @@ export default class Fruit {
         this.y = 0
         this.p5 = p5
         this.size = size
-        this.width = width / 50
-        this.height = height / 50
+        this.width = width / size
+        this.height = height / size
         this.newLocation({"body":[]})
     }
 
