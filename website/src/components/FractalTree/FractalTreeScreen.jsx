@@ -176,16 +176,16 @@ function FractalTreeScreen() {
           />
           <FormControlLabel 
             label="Animation" 
-            sx={{color:"gray", m:1}}
+            sx={{color:"gray", m:{xs:0, sm:1}}}
             control={
           <Switch
-            sx={{m:1}}
+            sx={{m:{xs:0,sm:1}}}
             defaultChecked={true}
             onChange={() => {setAnimation(!animation)}}
           />
           }
           />
-          <FormHelperText sx={{mt:-1, ml:11}}>Click again to stop animating</FormHelperText>
+          <FormHelperText sx={{mt:{sm:-1}, ml:{xs:3, sm:11}}}>Click again to stop animating</FormHelperText>
           <TextField 
             error={animationTimeError !== ""}
             label="Animation time (s)"
@@ -195,7 +195,7 @@ function FractalTreeScreen() {
             sx = {{m:2}}
           />
           <Slider 
-            sx={{m:3, width:"87%"}}
+            sx={{m:3, width:{xs:"60%", sm:"85%"}}}
             disabled={!animation}
             getAriaValueText={valuetext}
             marks={marks}
