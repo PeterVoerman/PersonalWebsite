@@ -10,6 +10,7 @@ export default class FractralTree {
     this.treeCoords = []
     this.lengthIncrement = 1.6 * this.height / (treeHeight ** 2)
     this.animationCounter = 0
+    this.animated = false
     this.nBranches = Math.pow(2, treeHeight+1)
     this.branchesPerFrame = this.nBranches / (60 * animationTime)
   }
@@ -47,7 +48,7 @@ export default class FractralTree {
         this.drawLine(coord[0], coord[1], coord[2], coord[3], coord[4])
       })
     } else {
-      console.log(this.animationCounter)
+      this.animated = true
       this.treeCoords.slice(this.animationCounter, this.animationCounter + this.branchesPerFrame).forEach((coord) => {
         this.drawLine(coord[0], coord[1], coord[2], coord[3], coord[4])
       })

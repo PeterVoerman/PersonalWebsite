@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { Helmet } from 'react-helmet'
-import './WhatsAppAnalyzer.css';
+//import './WhatsAppAnalyzer.css';
 
 import AnalysisScreen from './Components/analysisScreen'
 import UploadScreen from './Components/uploadScreen'

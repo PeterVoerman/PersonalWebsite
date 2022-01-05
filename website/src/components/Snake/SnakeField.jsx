@@ -7,6 +7,7 @@ import Fruit from './fruit'
 function SnakeField() {
   const [snake, setSnake] = useState()
   const [fruit, setFruit] = useState()
+  const [mouseStart, setMouseStart] = useState({"x":0, "y":0})
   const [frameRate, setFrameRate] = useState(5)
   let dirChanged
 
@@ -22,7 +23,7 @@ function SnakeField() {
     setFruit(new Fruit(p5.width, p5.height, p5.width/sizeRatio, p5))
 }
 
-  function draw(p5) {
+  const draw = (p5) => {
     dirChanged = false
     p5.background(25);
 
@@ -41,7 +42,7 @@ function SnakeField() {
     fruit.draw()
   }
 
-  function keyPressed(p5) {
+  const keyPressed = (p5) => {
     switch (p5.key) {
       case "ArrowLeft":
         if (snake.dir.x === 0 && !dirChanged) {
@@ -76,10 +77,39 @@ function SnakeField() {
         break
     }
   }
+
+  const touchStarted = (p5) => {
+    setMouseStart({"x":p5.mouseX, "y":p5.mouseY})
+  }
+
+  const touchEnded = (p5) => {
+    let distX = p5.mouseX - mouseStart["x"]
+    let distY = p5.mouseY - mouseStart["y"] 
+
+    if (Math.abs(distX) > Math.abs(distY) && distX > 0) {
+      keyPressed({"key":"ArrowRight"})
+    }
+    if (Math.abs(distX) > Math.abs(distY) && distX < 0) {
+      keyPressed({"key":"ArrowLeft"})
+    }
+    if (Math.abs(distX) < Math.abs(distY) && distY > 0) {
+      keyPressed({"key":"ArrowDown"})
+    }
+    if (Math.abs(distX) < Math.abs(distY) && distY < 0) {
+      keyPressed({"key":"ArrowUp"})
+    }
+  }
+  
   
   return (
     <div className='snake'>
-      <Sketch  setup={setup} draw={draw} keyPressed={keyPressed}/>
+      <Sketch 
+        setup={setup} 
+        draw={draw} 
+        keyPressed={keyPressed} 
+        mousePressed={touchStarted} 
+        touchEnded={touchEnded}
+      />
     </div>
   )
 }

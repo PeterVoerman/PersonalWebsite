@@ -32,8 +32,7 @@ function FractalTreeScreen() {
   const [colorError, setColorError] = useState("")
 
   const [animation, setAnimation] = useState(true)
-  const [animationTime, setAnimationTime] = useState(3)
-  const [animationTimeError, setAnimationTimeError] = useState("")
+  const [animationTime, setAnimationTime] = useState(1)
 
   const smallScreen = !useMediaQuery('(min-width:600px)')
 
@@ -76,20 +75,6 @@ function FractalTreeScreen() {
       }
       setTreeColors(colorArray)
     }
-  })
-
-  const confirmAnimationTime = ((event) => {
-    let input = event.target.value
-    setAnimationTimeError("")
-    if (isNaN(input)) {
-      setAnimationTimeError("Please enter a number")
-      return
-    }
-    if (parseInt(input) < 1) {
-      setAnimationTimeError("Please enter a number greater than 1")
-      return
-    }
-    setAnimationTime(parseInt(input))
   })
 
   const generateTree = (() => {
@@ -137,8 +122,11 @@ function FractalTreeScreen() {
     fractalTree.drawLine(p5.width/2, p5.height, p5.width/2, p5.height-50, 0)
 
     if (!animation) {
-      fractalTree.draw(-1)
+      fractalTree.animationCounter = -1
       p5.noLoop()
+      if (!fractalTree.animated) {
+        fractalTree.draw()
+      }
     } else {
       fractalTree.draw()
       fractalTree.animationCounter += fractalTree.branchesPerFrame
@@ -147,7 +135,6 @@ function FractalTreeScreen() {
         p5.noLoop()
       }
     }
-
   }
 
   return (
@@ -155,7 +142,11 @@ function FractalTreeScreen() {
         <Grid item xs={8} sm={10}>
           <Sketch setup={setup} draw={draw}/>
         </Grid>
-        <Grid item sm={2} xs={4} sx={{borderLeft: "2px solid #212529", display:"flex", flexDirection:"column"}}>
+        <Grid 
+          item 
+          sm={2} 
+          xs={4} 
+          sx={{borderLeft: "2px solid #212529", display:"flex", flexDirection:"column", background:"black"}}>
           <TextField 
             error={heightError !== ""}
             id="n-branches" 
@@ -185,21 +176,16 @@ function FractalTreeScreen() {
           />
           }
           />
-          <FormHelperText sx={{mt:{sm:-1}, ml:{xs:3, sm:11}}}>Click again to stop animating</FormHelperText>
-          <TextField 
-            error={animationTimeError !== ""}
-            label="Animation time (s)"
-            helperText={animationTimeError}
-            disabled={!animation}
-            onChange={(ev) => confirmAnimationTime(ev)}
-            sx = {{m:2}}
-          />
+          <FormHelperText 
+            sx={{mt:{sm:-1}, ml:{xs:3, sm:11}}}>
+            Click again to stop animating
+          </FormHelperText>
           <Slider 
             sx={{m:3, width:{xs:"60%", sm:"85%"}}}
             disabled={!animation}
             getAriaValueText={valuetext}
             marks={marks}
-            onChange={(ev=>setAnimationTime((ev.target.value + 1)*2))}/>
+            onChange={(ev=>setAnimationTime(ev.target.value * 2 + 1))}/>
           <Button
             variant="outlined"
             sx={{m:2}}

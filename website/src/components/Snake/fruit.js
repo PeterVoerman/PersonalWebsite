@@ -22,7 +22,6 @@ export default class Fruit {
         let inBody = true
 
         while (inBody) {
-            console.log(inBody)
             inBody = false
             snake.body.forEach((bodyPart) => {
                 if (this.x === bodyPart.x && this.y === bodyPart.y) {

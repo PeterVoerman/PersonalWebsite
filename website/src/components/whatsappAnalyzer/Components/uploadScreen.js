@@ -1,6 +1,5 @@
-import '../WhatsAppAnalyzer.css'
-import { Container, Row, Col } from 'react-bootstrap'
 import React from 'react'
+import { Grid, Typography, Box } from '@mui/material'
 
 // Generate the upload screen
 function UploadScreen(props) {
@@ -18,11 +17,11 @@ function UploadScreen(props) {
   }
   
   return (
-  <Container className="analyzer">
-    <h1>WhatsApp Analyzer</h1>
-      <Row>
-        <Col className="explanation">
-          <h4>How to analyze your WhatsApp chat logs:</h4>
+    <Box sx={{color:"#00bfa5", textAlign:"center"}}>
+      <Typography variant='h2' sx={{m:3}}>WhatsApp Analyzer</Typography>
+      <Grid container>
+        <Grid item xs={5} md={3.5} sx={{ml:{xs:5,lg:35}, textAlign:"left", background:"#262d31", borderRadius:"8px"}}>
+          <Typography variant='h4' sx={{m:2}}>How to analyze your WhatsApp chat logs:</Typography>
           <ul>
             <li>Open a WhatsApp chat and tap the three dots in the top left of your screen</li>
             <li>Select more -{'>'} Export chat</li>
@@ -30,18 +29,19 @@ function UploadScreen(props) {
             <li>Send the chat logs to yourself via WhatsApp/email/bluetooth</li>
             <li>Upload the chat logs</li>
           </ul>
-        </Col>
-        <Col xs={2}/>
-        <Col className='upload'>
-          Upload files by dragging them on the box below or by clicking on it.
-          <br/>
-          <label for='inputfile' className='inputlabel'>
-            <input type="file"
-                  id="inputfile" className='input' onChange={(f)=>readFile(f)}/>
-          </label>
-        </Col> 
-      </Row>
-    </Container>
+        </Grid>
+        <Grid item xs={0.5} md={2}/>
+        <Grid item xs={5} md={3.5} sx={{textAlign:"left", background:"#262d31", borderRadius:"8px"}}>
+          <Typography sx={{m:2}}>Upload files by dragging them on the box below or by clicking on it.</Typography> 
+          <Box sx={{borderStyle:"dashed", borderRadius:"8px", m:2, height:"70%"}}>
+            <label for='inputfile'>
+              <input type="file"
+                    id="inputfile" style={{opacity:0, cursor:"pointer", height:"20vh"}} onChange={(f)=>readFile(f)}/>
+            </label>
+          </Box>
+        </Grid> 
+      </Grid>
+    </Box>
   )
 }
 

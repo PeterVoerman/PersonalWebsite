@@ -3,9 +3,10 @@ import ReactDOM from 'react-dom';
 import './index.css';
 import reportWebVitals from './reportWebVitals';
 import { BrowserRouter as Router, Route, Routes } from "react-router-dom";
-import { createTheme, ThemeProvider } from '@mui/material';
+import { createTheme, ThemeProvider, Typography } from '@mui/material';
 
-const NavigationBar = lazy(() => import('./components/NavigationBar/NavigationBar'))
+import NavigationBar from './components/NavigationBar/NavigationBar'
+
 const Home = lazy(() => import('./components/home/home'))
 const WhatsAppAnalyzer = lazy(() => import('./components/whatsappAnalyzer/WhatsAppAnalyzer'))
 const SnakeField = lazy(() => import('./components/Snake/SnakeField'))
@@ -20,9 +21,10 @@ const theme = createTheme({
 
 ReactDOM.render(
     <Router>
-      <Suspense fallback={<div>Loading...</div>}>
-      <ThemeProvider theme={theme}>
       <NavigationBar/>
+      <Suspense fallback={<Typography variant='h3' color='white' sx={{m:2}}>Loading...</Typography>}>
+      <ThemeProvider theme={theme}>
+      
       <Routes>
         <Route exact path="/" element={<Home/>}/>
         <Route path='/snake' element={<SnakeField/>}/>
