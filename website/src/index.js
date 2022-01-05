@@ -9,7 +9,7 @@ const NavigationBar = lazy(() => import('./components/NavigationBar/NavigationBa
 const Home = lazy(() => import('./components/home/home'))
 const WhatsAppAnalyzer = lazy(() => import('./components/whatsappAnalyzer/WhatsAppAnalyzer'))
 const SnakeField = lazy(() => import('./components/Snake/SnakeField'))
-const FractalTree = lazy(() => import('./components/FractalTree/FractalTree'))
+const FractalTreeScreen = lazy(() => import('./components/FractalTree/FractalTreeScreen'))
 const SolarSystem = lazy(() => import('./components/SolarSystem/SolarSystem'))
 
 const theme = createTheme({
@@ -26,7 +26,7 @@ ReactDOM.render(
       <Routes>
         <Route exact path="/" element={<Home/>}/>
         <Route path='/snake' element={<SnakeField/>}/>
-        <Route path='/fractaltree' element={<FractalTree/>}/>
+        <Route path='/fractaltree' element={<FractalTreeScreen/>}/>
         <Route path='/solarsystem' element={<SolarSystem/>}/>
         <Route path="/whatsappanalyzer" element={<WhatsAppAnalyzer/>}/>
       </Routes>

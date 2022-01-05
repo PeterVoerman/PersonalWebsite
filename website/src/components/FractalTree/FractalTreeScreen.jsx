@@ -2,18 +2,27 @@ import React, { useState, useEffect } from 'react'
 import Sketch from 'react-p5'
 import { TextField, Grid, Checkbox, FormControlLabel, Button, FormHelperText, useMediaQuery } from '@mui/material'
 
+import FractalTree from './FractalTree'
+
 let Rainbow = require('rainbowvis.js')
 let gradient = new Rainbow()
 
-function FractalTree() {
+const fractalTree = new FractalTree()
+
+function FractalTreeScreen() {
 
   const [p5, setP5] = useState()
   const [height, setHeight] = useState()
   const [width, setWidth] = useState()
   
   const [treeCounter, setTreeCounter] = useState(0)
+  const [treeCoords, setTreeCoords] = useState([])
+  const [animationCounter, setAnimationCounter] = useState(0)
+
+  const [lengthIncrement, setLengthIncrement] = useState()
+  const [nBranches, setNBranches] = useState()
   
-  const [treeHeight, setTreeHeight] = useState(13)
+  const [treeHeight, setTreeHeight] = useState(5)
   const [heightError, setHeightError] = useState('')
 
   const [treeColors, setTreeColors] = useState(["#211300", "#211300", "green"])
@@ -100,31 +109,37 @@ function FractalTree() {
       colorList.push(color)
     }
     
-    setColors(colorList)
+    fractalTree.setColors(colorList)
   }
 
   // Update color gradient when new colors are provied
-  useEffect(() => {
-    findColors()
-  }, [treeColors])
+  // useEffect(() => {
+  //   findColors()
+  // }, [treeColors])
 
   // Generate new tree
   useEffect(() => {
-    treeCoords = []
-    findColors()
+    //fractalTree.reset()
+    
+
+
+
+    setTreeCoords([])
+    setAnimationCounter(0)
+    setLengthIncrement(1.6 * height / (treeHeight * treeHeight))
+    let branches = Math.pow(2, treeHeight+1)
+    setBranchesPerFrame(branches / (60 * animationTime))
+    setNBranches(branches)
     if (p5) {
       p5.loop()
     }
-    
   }, [treeCounter])
 
 
-  let lengthIncrement
-  let nBranches
-  let animationCounter = 0
-  let treeCoords = []
+  
 
   const setup = (p5, canvasParentRef) => {
+
     let proportion
     if (smallScreen) {
       proportion = 2 / 3
@@ -133,83 +148,51 @@ function FractalTree() {
     }
     
     p5.createCanvas(window.innerWidth * proportion, window.innerHeight - 50).parent(canvasParentRef)
-    setP5(p5)
+    fractalTree.init(p5, treeHeight, p5.width, p5.height)
+    findColors()
+
     setHeight(window.innerHeight)
     setWidth(window.innerWidth * proportion)
+
+    setTreeCounter(treeCounter + 1)
   }
 
   function draw(p5) {
-    lengthIncrement = 1.6 * height / (treeHeight * treeHeight)
+    // if (treeCoords.length === 0 && width && colors.length === treeHeight && animationCounter === 0) {
+    //   p5.clear()
+    //   fractalTree(p5, p5.width/2, p5.height-50, 3*p5.HALF_PI, (treeHeight+1)*lengthIncrement, 0, treeHeight)
+      
+    //   console.log("yo")
 
-    if (treeCoords.length === 0 && width && colors.length === treeHeight && animationCounter === 0) {
+    //   if (!animation) {
+    //     p5.noLoop()
+    //   } else {
+    //     setAnimating(true)
+    //   }
+    // }
+
+    if (treeCoords.length === 0) {
       p5.clear()
-      fractalTree(p5, p5.width/2, p5.height-50, 3*p5.HALF_PI, (treeHeight+1)*lengthIncrement, 0, treeHeight)
-      nBranches = Math.pow(2, treeHeight+1)
-      animationCounter = 0
-      setBranchesPerFrame(nBranches / (60 * animationTime))
-
-      if (!animation) {
-        p5.noLoop()
-      } else {
-        setAnimating(true)
-      }
+      fractalTree.calculateCoords(fractalTree.width / 2, fractalTree.height - 50, 1.5 * Math.PI, (fractalTree.treeHeight + 1) * fractalTree.lengthIncrement, 0)
     }
 
     p5.strokeWeight(10)
-    drawLine(p5, p5.width/2, p5.height, p5.width/2, p5.height-50, 0, treeHeight+1)
+    fractalTree.drawLine(p5.width/2, p5.height, p5.width/2, p5.height-50, 0)
 
-    if (!animation) {
-      treeCoords.forEach((coords) => {
-        drawLine(p5, coords[0], coords[1], coords[2], coords[3], coords[4], treeHeight)
-      })
-    } else {
-      
-      animationCounter += branchesPerFrame
-      treeCoords.slice(animationCounter - branchesPerFrame, animationCounter).forEach((coords) => {
-        drawLine(p5, coords[0], coords[1], coords[2], coords[3], coords[4], treeHeight)
-      })
+    fractalTree.draw()
+    p5.noLoop()
+    // } else {
+    //   setAnimationCounter(parseInt(animationCounter + branchesPerFrame))
+    //   treeCoords.slice(animationCounter - branchesPerFrame, animationCounter).forEach((coords) => {
+    //     drawLine(p5, coords[0], coords[1], coords[2], coords[3], coords[4], treeHeight)
+    //   })
 
-      if (animationCounter > nBranches) {
-        p5.noLoop()
-        setAnimating(false)
-      }
-    }
+    //   if (animationCounter > nBranches) {
+    //     p5.noLoop()
+    //     setAnimating(false)
+    //   }
+    // }
   }
-
-  function drawLine(p5, x, y, xEnd, yEnd, counter, treeHeight) {
-    let width = treeHeight - counter
-    p5.strokeWeight(width)
-    p5.stroke(colors[counter])
-    p5.line(x, y, xEnd, yEnd)
-  }
-
-  function newCoords(p5, x, y, angle, length) {
-    let xEnd = x + p5.cos(angle) * length
-    let yEnd = y + p5.sin(angle) * length
-    
-    return [xEnd, yEnd]
-  }
-
-  function fractalTree(p5, x, y, angle, length, counter, treeHeight) {
-    let angle1 = angle + p5.random(0, 0.1 + counter / 80) * p5.PI
-    let angle2 = angle - p5.random(0, 0.1 + counter / 80) * p5.PI
-
-    let newLength = length - lengthIncrement
-
-    let coords1 = newCoords(p5, x, y, angle1, newLength)
-    let coords2 = newCoords(p5, x, y, angle2, newLength)
-    
-    treeCoords.push([x, y, coords1[0], coords1[1], counter])
-    treeCoords.push([x, y, coords2[0], coords2[1], counter])
-
-    counter += 1
-
-    if (counter < treeHeight) {
-      fractalTree(p5, coords1[0], coords1[1], angle1, newLength, counter, treeHeight)
-      fractalTree(p5, coords2[0], coords2[1], angle2, newLength, counter, treeHeight)
-    }
-  }
-
 
   return (
     <Grid container style={{borderTop: "2px solid #212529"}}>
@@ -273,5 +256,5 @@ function FractalTree() {
 }
 
 
-export default FractalTree
+export default FractalTreeScreen
 
