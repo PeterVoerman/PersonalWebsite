@@ -1,6 +1,6 @@
-import React, { useState, useEffect } from 'react'
+import React, { useState } from 'react'
 import Sketch from 'react-p5'
-import { TextField, Grid, Checkbox, FormControlLabel, Button, FormHelperText, useMediaQuery } from '@mui/material'
+import { TextField, Grid, FormControlLabel, Button, FormHelperText, useMediaQuery, Switch, Slider } from '@mui/material'
 
 import FractalTree from './FractalTree'
 
@@ -9,31 +9,31 @@ let gradient = new Rainbow()
 
 const fractalTree = new FractalTree()
 
-function FractalTreeScreen() {
+function valuetext(value) {
+  return `${value}°C`;
+}
 
-  const [p5, setP5] = useState()
-  const [height, setHeight] = useState()
-  const [width, setWidth] = useState()
-  
-  const [treeCounter, setTreeCounter] = useState(0)
-  const [treeCoords, setTreeCoords] = useState([])
-  const [animationCounter, setAnimationCounter] = useState(0)
+const marks = [
+  {
+    value: 0,
+    label: 'Fast',
+  },
+  {
+    value: 100,
+    label: 'Slow',
+  },
+];
 
-  const [lengthIncrement, setLengthIncrement] = useState()
-  const [nBranches, setNBranches] = useState()
-  
-  const [treeHeight, setTreeHeight] = useState(5)
+function FractalTreeScreen() {  
+  const [treeHeight, setTreeHeight] = useState(13)
   const [heightError, setHeightError] = useState('')
 
   const [treeColors, setTreeColors] = useState(["#211300", "#211300", "green"])
-  const [colors, setColors] = useState()
   const [colorError, setColorError] = useState("")
 
   const [animation, setAnimation] = useState(true)
-  const [animating, setAnimating] = useState(false)
   const [animationTime, setAnimationTime] = useState(3)
   const [animationTimeError, setAnimationTimeError] = useState("")
-  const [branchesPerFrame, setBranchesPerFrame] = useState(1)
 
   const smallScreen = !useMediaQuery('(min-width:600px)')
 
@@ -94,7 +94,11 @@ function FractalTreeScreen() {
 
   const generateTree = (() => {
     if ((heightError === "" || heightError === "Waiting times grow exponentially") && colorError === "") {
-      setTreeCounter(treeCounter + 1)
+      fractalTree.initTree(treeHeight, animationTime)
+      findColors()
+      fractalTree.calculateCoords(fractalTree.p5.width / 2, fractalTree.p5.height - 50, 1.5 * Math.PI, (fractalTree.treeHeight + 1) * fractalTree.lengthIncrement, 0)
+      fractalTree.p5.clear()
+      fractalTree.p5.loop()
     }
   })
 
@@ -110,33 +114,7 @@ function FractalTreeScreen() {
     }
     
     fractalTree.setColors(colorList)
-  }
-
-  // Update color gradient when new colors are provied
-  // useEffect(() => {
-  //   findColors()
-  // }, [treeColors])
-
-  // Generate new tree
-  useEffect(() => {
-    //fractalTree.reset()
-    
-
-
-
-    setTreeCoords([])
-    setAnimationCounter(0)
-    setLengthIncrement(1.6 * height / (treeHeight * treeHeight))
-    let branches = Math.pow(2, treeHeight+1)
-    setBranchesPerFrame(branches / (60 * animationTime))
-    setNBranches(branches)
-    if (p5) {
-      p5.loop()
-    }
-  }, [treeCounter])
-
-
-  
+  }  
 
   const setup = (p5, canvasParentRef) => {
 
@@ -148,50 +126,28 @@ function FractalTreeScreen() {
     }
     
     p5.createCanvas(window.innerWidth * proportion, window.innerHeight - 50).parent(canvasParentRef)
-    fractalTree.init(p5, treeHeight, p5.width, p5.height)
+    fractalTree.initP5(p5, p5.height)
+    generateTree()
     findColors()
-
-    setHeight(window.innerHeight)
-    setWidth(window.innerWidth * proportion)
-
-    setTreeCounter(treeCounter + 1)
   }
 
   function draw(p5) {
-    // if (treeCoords.length === 0 && width && colors.length === treeHeight && animationCounter === 0) {
-    //   p5.clear()
-    //   fractalTree(p5, p5.width/2, p5.height-50, 3*p5.HALF_PI, (treeHeight+1)*lengthIncrement, 0, treeHeight)
-      
-    //   console.log("yo")
-
-    //   if (!animation) {
-    //     p5.noLoop()
-    //   } else {
-    //     setAnimating(true)
-    //   }
-    // }
-
-    if (treeCoords.length === 0) {
-      p5.clear()
-      fractalTree.calculateCoords(fractalTree.width / 2, fractalTree.height - 50, 1.5 * Math.PI, (fractalTree.treeHeight + 1) * fractalTree.lengthIncrement, 0)
-    }
 
     p5.strokeWeight(10)
     fractalTree.drawLine(p5.width/2, p5.height, p5.width/2, p5.height-50, 0)
 
-    fractalTree.draw()
-    p5.noLoop()
-    // } else {
-    //   setAnimationCounter(parseInt(animationCounter + branchesPerFrame))
-    //   treeCoords.slice(animationCounter - branchesPerFrame, animationCounter).forEach((coords) => {
-    //     drawLine(p5, coords[0], coords[1], coords[2], coords[3], coords[4], treeHeight)
-    //   })
+    if (!animation) {
+      fractalTree.draw(-1)
+      p5.noLoop()
+    } else {
+      fractalTree.draw()
+      fractalTree.animationCounter += fractalTree.branchesPerFrame
+      
+      if (fractalTree.animationCounter > fractalTree.nBranches) {
+        p5.noLoop()
+      }
+    }
 
-    //   if (animationCounter > nBranches) {
-    //     p5.noLoop()
-    //     setAnimating(false)
-    //   }
-    // }
   }
 
   return (
@@ -206,7 +162,6 @@ function FractalTreeScreen() {
             label="Number of branches" 
             helperText={heightError}
             variant="outlined" 
-            disabled={animating}
             onChange={(ev) => confirmHeight(ev)}
             sx={{m:2}}
           />
@@ -216,32 +171,35 @@ function FractalTreeScreen() {
             id="colors" 
             label="Colors" 
             variant="outlined" 
-            disabled={animating}
             onChange={(ev) => confirmColors(ev)}
             sx={{m:2}}
           />
-
           <FormControlLabel 
             label="Animation" 
             sx={{color:"gray", m:1}}
             control={
-          <Checkbox
+          <Switch
+            sx={{m:1}}
             defaultChecked={true}
-            onChange={() => {
-              setAnimation(!animation)
-              setAnimating(false)}}
+            onChange={() => {setAnimation(!animation)}}
           />
           }
           />
-          <FormHelperText sx={{mt:-1, ml:7}}>Click again to stop animating</FormHelperText>
+          <FormHelperText sx={{mt:-1, ml:11}}>Click again to stop animating</FormHelperText>
           <TextField 
             error={animationTimeError !== ""}
             label="Animation time (s)"
             helperText={animationTimeError}
-            disabled={!animation || animating}
+            disabled={!animation}
             onChange={(ev) => confirmAnimationTime(ev)}
             sx = {{m:2}}
           />
+          <Slider 
+            sx={{m:3, width:"87%"}}
+            disabled={!animation}
+            getAriaValueText={valuetext}
+            marks={marks}
+            onChange={(ev=>setAnimationTime((ev.target.value + 1)*2))}/>
           <Button
             variant="outlined"
             sx={{m:2}}
@@ -249,8 +207,7 @@ function FractalTreeScreen() {
           >
             Generate
           </Button>
-          
-        </Grid >
+        </Grid>
     </Grid>
   )
 }

@@ -1,13 +1,17 @@
 export default class FractralTree {
-  init(p5, treeHeight, width, height) {
-    this.treeHeight = treeHeight
+  initP5(p5, height) {
     this.p5 = p5
-    this.width = width
     this.height = height
+  }
 
+  initTree(treeHeight, animationTime) {
+    this.treeHeight = treeHeight
     this.treeCounter = 0
     this.treeCoords = []
-    this.lengthIncrement = 1.6 * height / (treeHeight ** 2)
+    this.lengthIncrement = 1.6 * this.height / (treeHeight ** 2)
+    this.animationCounter = 0
+    this.nBranches = Math.pow(2, treeHeight+1)
+    this.branchesPerFrame = this.nBranches / (60 * animationTime)
   }
 
   calculateCoords(x, y, angle, length, counter) {
@@ -38,10 +42,16 @@ export default class FractralTree {
   }
 
   draw() {
-    this.treeCoords.forEach((coord) => {
-      //console.log(coord)
-      this.drawLine(coord[0], coord[1], coord[2], coord[3], coord[4])
-    })
+    if (this.animationCounter === -1) {
+      this.treeCoords.forEach((coord) => {
+        this.drawLine(coord[0], coord[1], coord[2], coord[3], coord[4])
+      })
+    } else {
+      console.log(this.animationCounter)
+      this.treeCoords.slice(this.animationCounter, this.animationCounter + this.branchesPerFrame).forEach((coord) => {
+        this.drawLine(coord[0], coord[1], coord[2], coord[3], coord[4])
+      })
+    }
   }
 
   drawLine(x, y, xEnd, yEnd, counter) {
@@ -59,6 +69,5 @@ export default class FractralTree {
 
   setColors(colors) {
     this.colors = colors
-    console.log(colors)
   }
 }
