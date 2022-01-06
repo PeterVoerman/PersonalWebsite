@@ -20,7 +20,7 @@ export default class Fruit {
 
         for (let i = 0; i < this.width; i++) {
             for (let j = 0; j < this.height; j++) {
-                if (!snake.xCoords.includes(i) && !snake.yCoords.includes(j)) {
+                if (!snake.xCoords.includes(i) || !snake.yCoords.includes(j)) {
                     possibleCoords.push({"x":i, "y":j})
                 }
             }
