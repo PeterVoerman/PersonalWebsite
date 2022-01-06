@@ -6,7 +6,7 @@ export default class Fruit {
         this.size = size
         this.width = width / size
         this.height = height / size
-        this.newLocation({"body":[]})
+        this.newLocation({"body":[], "xCoords":[], "yCoords":[]})
     }
 
 
@@ -16,18 +16,18 @@ export default class Fruit {
     }
 
     newLocation(snake) {
-        this.x = this.p5.floor(this.p5.random(0, this.width))
-        this.y = this.p5.floor(this.p5.random(0, this.height))
-        
-        let inBody = true
+        let possibleCoords = []
 
-        while (inBody) {
-            inBody = false
-            snake.body.forEach((bodyPart) => {
-                if (this.x === bodyPart.x && this.y === bodyPart.y) {
-                    inBody = true
+        for (let i = 0; i < this.width; i++) {
+            for (let j = 0; j < this.height; j++) {
+                if (!snake.xCoords.includes(i) && !snake.yCoords.includes(j)) {
+                    possibleCoords.push({"x":i, "y":j})
                 }
-            })
+            }
         }
+
+        let coord = parseInt(this.p5.random(possibleCoords.length))
+        this.x = possibleCoords[coord]["x"]
+        this.y = possibleCoords[coord]["y"]
     }
 }

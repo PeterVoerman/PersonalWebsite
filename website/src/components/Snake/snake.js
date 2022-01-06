@@ -1,6 +1,5 @@
 export default class Snake {
     constructor(x, y, width, height, size, p5) {
-        
         this.oldBody = this.body
         this.p5 = p5
         this.height = height / size
@@ -10,11 +9,17 @@ export default class Snake {
         this.vel = 1
         this.dir = {"x":1, "y":0}
 
+        this.xCoords = []
+        this.yCoords = []
+
         this.body = [{"x":x + 2, "y":y}, {"x":x + 1, "y":y}, {"x":x, "y":y}]
         
     }
 
     move() {
+        this.xCoords = []
+        this.yCoords = []
+
         this.oldBody = JSON.parse(JSON.stringify(this.body))
 
         for (let i = this.body.length - 1; i > 0; i--) {
@@ -25,6 +30,10 @@ export default class Snake {
         this.body[0].x += this.vel * this.dir.x
         this.body[0].y += this.vel * this.dir.y
         
+        this.body.forEach((bodyPart) => {
+            this.xCoords.push(parseInt(bodyPart["x"]))
+            this.yCoords.push(parseInt(bodyPart["y"]))
+        })
     }
 
     draw() {
